@@ -1,5 +1,20 @@
 # Elevate Your .NET with GitHub Copilot and AI APIs — DevIntersection Demos
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Contributors](https://img.shields.io/github/contributors/elbruno/2510-DevIntersection-demos.svg)](https://github.com/elbruno/2510-DevIntersection-demos/graphs/contributors)
+[![Issues](https://img.shields.io/github/issues/elbruno/2510-DevIntersection-demos.svg)](https://github.com/elbruno/2510-DevIntersection-demos/issues)
+[![Pull Requests](https://img.shields.io/github/issues-pr/elbruno/2510-DevIntersection-demos.svg)](https://github.com/elbruno/2510-DevIntersection-demos/pulls)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?repo=elbruno/2510-DevIntersection-demos)
+
+---
+
+### 💬 Join the Conversation
+
+- 💡 **[Azure AI Foundry Discussions](https://github.com/Azure/azure-ai-foundry/discussions)**  
+- 💬 **[Azure AI Discord Community](https://discord.gg/azureai)**  
+
+---
+
 > Slides and demo artifacts for the session **“Elevate Your .NET with GitHub Copilot and AI APIs.”**  
 > If you’re looking for the **finished, runnable sample** created live from prompts, head over to:  
 > 👉 **[OrlandoParksLabs](https://github.com/elbruno/OrlandoParksLabs)**
