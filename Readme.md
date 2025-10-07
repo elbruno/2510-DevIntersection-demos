@@ -65,11 +65,13 @@ You can explore this repo directly in **GitHub Codespaces**:
 
 1. Click the **Open in GitHub Codespaces** badge above  
    or open: [https://github.com/codespaces/new?repo=elbruno/2510-DevIntersection-demos](https://github.com/codespaces/new?repo=elbruno/2510-DevIntersection-demos)
-2. Ensure the container uses **.NET 9 SDK** (download locally if needed: [dotnet.microsoft.com/en-us/download/dotnet/9.0](https://dotnet.microsoft.com/en-us/download/dotnet/9.0))
-3. Explore folders such as:
+3. Ensure the container uses **.NET 9 SDK** (download locally if needed: [dotnet.microsoft.com/en-us/download/dotnet/9.0](https://dotnet.microsoft.com/en-us/download/dotnet/9.0))
+4. Explore folders such as:
    - `/prompts` → Copilot and Codespaces prompts  
    - `/snippets` → code used live  
    - `/slides` → reference slides or visuals  
+   - `/2-AIWebChat/1.start` → starter project for AI Web Chat  
+   - `/2-AIWebChat/2.complete` → completed AI Web Chat project
 
 ---
 

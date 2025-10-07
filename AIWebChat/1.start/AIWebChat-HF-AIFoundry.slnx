@@ -1,5 +1,0 @@
-<Solution>
-  <Project Path="AIWebChat-HF-AIFoundry.AppHost/AIWebChat-HF-AIFoundry.AppHost.csproj" />
-  <Project Path="AIWebChat-HF-AIFoundry.ServiceDefaults/AIWebChat-HF-AIFoundry.ServiceDefaults.csproj" />
-  <Project Path="AIWebChat-HF-AIFoundry.Web/AIWebChat-HF-AIFoundry.Web.csproj" />
-</Solution>
