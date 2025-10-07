@@ -14,7 +14,7 @@ var config = builder.Configuration
     .AddEnvironmentVariables()
     .AddUserSecrets<Program>()
     .Build();
-var deploymentName = config["deploymentName"] ?? "llama3.2"; // Default to llama3.2 if not specified
+var deploymentName = config["deploymentName"] ?? "mistral-nemo"; // Default to llama3.2 if not specified
 
 // create MCP Client using Hugging Face endpoint
 var hfHeaders = new Dictionary<string, string>

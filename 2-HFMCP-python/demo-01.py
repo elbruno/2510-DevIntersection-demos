@@ -1,140 +1,110 @@
-"""
-Hugging Face MCP Server Demo - Image Generation
-This demo connects to the Hugging Face MCP Server and generates an image using Flux 1 Schnell.
-"""
+# pip install "mcp" openai
+# Environment:
+#   MCP_URL=https://your-mcp.example.com/mcp
+#   MCP_BEARER_TOKEN=eyJhbGciOi...
+#   AZURE_OPENAI_ENDPOINT=https://YOUR-RESOURCE-NAME.openai.azure.com
+#   AZURE_OPENAI_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxx
+#   AZURE_OPENAI_DEPLOYMENT=<your-chat-deployment-name>   # e.g., gpt-4o or gpt-4.1 deployment name
 
-import asyncio
-import os
-import base64
-from pathlib import Path
+import os, json, asyncio
+from openai import OpenAI
+from mcp import ClientSession
+from mcp.client.streamable_http import streamablehttp_client  # Streamable HTTP transport
 from dotenv import load_dotenv
-import httpx
 
-# Load environment variables from .env file
 load_dotenv()
 
+# --- Azure OpenAI client (Chat Completions + tool calling) ---
+client = OpenAI(
+    base_url=f"{os.environ['AZURE_OPENAI_ENDPOINT'].rstrip('/')}/openai/v1/",
+    api_key=os.environ["AZURE_OPENAI_API_KEY"],
+)
+DEPLOYMENT = os.environ["AZURE_OPENAI_DEPLOYMENT"]
 
-async def generate_image_with_hf_mcp(prompt: str):
-    """
-    Connect to Hugging Face MCP Server and generate an image using Flux 1 Schnell.
-    
-    Args:
-        prompt: The text description of the image to generate
-    """
-    # Get the Hugging Face token from environment variables
-    hf_token = os.getenv("HUGGINGFACE_BEARER_TOKEN")
-    
-    if not hf_token:
-        print("❌ Error: HUGGINGFACE_BEARER_TOKEN not found in .env file")
-        print("Please create a .env file with your Hugging Face token:")
-        print("HUGGINGFACE_BEARER_TOKEN=your_token_here")
-        return
-    
-    print("🚀 Connecting to Hugging Face MCP Server...")
-    
-    # Hugging Face MCP Server endpoint
-    mcp_url = "https://api.huggingface.co/mcp/v1"
-    
-    headers = {
-        "Authorization": f"Bearer {hf_token}",
-        "Content-Type": "application/json"
-    }
-    
-    try:
-        async with httpx.AsyncClient(timeout=120.0) as client:
-            # List available tools
-            print("✅ Connected to Hugging Face MCP Server")
-            print("\n📋 Listing available tools...")
-            
-            list_tools_response = await client.post(
-                f"{mcp_url}/tools/list",
-                headers=headers,
-                json={}
-            )
-            
-            if list_tools_response.status_code == 200:
-                tools_data = list_tools_response.json()
-                tools = tools_data.get("tools", [])
-                print(f"   Found {len(tools)} tools")
-                for tool in tools[:5]:  # Show first 5 tools
-                    print(f"   - {tool.get('name', 'unknown')}")
-            
-            # Use the provided prompt
-            print(f"\n🎨 Generating image with prompt:")
-            print(f"   '{prompt}'")
-            
-            # Call the Flux 1 Schnell image generation tool
-            tool_call_response = await client.post(
-                f"{mcp_url}/tools/call",
-                headers=headers,
-                json={
-                    "name": "gr1_flux1_schnell_infer",
-                    "arguments": {
-                        "prompt": prompt,
-                        "width": 1024,
-                        "height": 1024,
-                        "num_inference_steps": 4,
-                        "randomize_seed": True
-                    }
-                }
-            )
-            
-            if tool_call_response.status_code == 200:
-                print("✅ Image generated successfully!")
-                
-                result = tool_call_response.json()
-                content_list = result.get("content", [])
-                
-                # Process the result
-                for content in content_list:
-                    if content.get("type") == "image":
-                        # Save the image
-                        output_dir = Path("output")
-                        output_dir.mkdir(exist_ok=True)
-                        
-                        # The image data is in base64 format
-                        image_data = base64.b64decode(content.get("data", ""))
-                        
-                        output_path = output_dir / "generated_image.png"
-                        with open(output_path, "wb") as f:
-                            f.write(image_data)
-                        
-                        print(f"💾 Image saved to: {output_path.absolute()}")
-                    elif content.get("type") == "text":
-                        print(f"📝 Response: {content.get('text', '')}")
-            else:
-                print(f"❌ Error calling tool: {tool_call_response.status_code}")
-                print(f"   Response: {tool_call_response.text}")
-                
-    except httpx.HTTPStatusError as e:
-        print(f"❌ HTTP Error: {e.response.status_code}")
-        print(f"   Response: {e.response.text}")
-    except Exception as e:
-        print(f"❌ Error: {str(e)}")
-        print("\nTroubleshooting tips:")
-        print("1. Check your Hugging Face token is valid")
-        print("2. Verify your internet connection")
-        print("3. Ensure the MCP server endpoint is accessible")
-        raise
+MCP_URL = os.environ["MCP_URL"]
+MCP_TOKEN = os.environ["MCP_BEARER_TOKEN"]
 
+HEADERS = {
+    "Authorization": f"Bearer {MCP_TOKEN}",
+    # Add any other headers your server requires
+}
 
 async def main():
-    """Main entry point for the demo."""
-    print("=" * 60)
-    print("🤗 Hugging Face MCP Server - Image Generation Demo")
-    print("=" * 60)
-    print()
-    
-    # Define the image generation prompt
-    prompt = "A pixelated image of a racoon in Canada"
-    
-    await generate_image_with_hf_mcp(prompt)
-    
-    print()
-    print("=" * 60)
-    print("✨ Demo completed!")
-    print("=" * 60)
+    # 1) CONNECT to the MCP server (with Bearer token)
+    async with streamablehttp_client(MCP_URL, headers=HEADERS) as (read, write, _):
+        async with ClientSession(read, write) as session:
+            await session.initialize()
 
+            # 2) LIST TOOLS exposed by the server
+            tools_resp = await session.list_tools()
+            tool_names = [t.name for t in tools_resp.tools]
+            print("MCP tools:", tool_names)
+
+            # Convert MCP tools → Azure OpenAI "tools" (function calling) format
+            # MCP 'Tool' includes name, description, and inputSchema (JSON Schema)
+            aoai_tools = []
+            for t in tools_resp.tools:
+                desc = (t.description or f"MCP tool {t.name}")[:1000]  # Azure description limit ~1024 chars
+                params = t.inputSchema or {"type": "object", "properties": {}}
+                aoai_tools.append({
+                    "type": "function",
+                    "function": {
+                        "name": t.name,
+                        "description": desc,
+                        "parameters": params,
+                    },
+                })
+
+            # 3) ASK Azure OpenAI to use an MCP tool
+            #    Feel free to tailor this prompt to your server's tools (e.g., "add", "search", etc.)
+            user_prompt = (
+                "Generate a pixelated image of a racoon in Canada using the Flux1 tool from the Hugging Face MCP server"
+            )
+
+            messages = [{"role": "user", "content": user_prompt}]
+            first = client.chat.completions.create(
+                model=DEPLOYMENT,
+                messages=messages,
+                tools=aoai_tools,
+                tool_choice="auto",
+            )
+
+            msg = first.choices[0].message
+            messages.append(msg)
+
+            # If the model decided to call a tool, execute it on the MCP server
+            if msg.tool_calls:
+                for call in msg.tool_calls:
+                    name = call.function.name
+                    args = json.loads(call.function.arguments or "{}")
+
+                    # Execute the MCP tool
+                    result = await session.call_tool(name, arguments=args)
+
+                    # Minimal way to feed tool result back to the model
+                    # Prefer structuredContent if available; otherwise dump entire result
+                    content = (
+                        json.dumps(result.structuredContent)
+                        if getattr(result, "structuredContent", None) is not None
+                        else result.model_dump_json()
+                    )
+
+                    messages.append({
+                        "role": "tool",
+                        "tool_call_id": call.id,
+                        "name": name,
+                        "content": content,
+                    })
+
+                # Ask the model for the final user-facing answer
+                final = client.chat.completions.create(
+                    model=DEPLOYMENT,
+                    messages=messages,
+                )
+                print("Final answer:", final.choices[0].message.content)
+            else:
+                print("Model did not call a tool. Try nudging the prompt.")
+                
 
 if __name__ == "__main__":
     asyncio.run(main())
