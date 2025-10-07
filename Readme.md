@@ -76,6 +76,46 @@ You can explore this repo directly in **GitHub Codespaces**:
      - `/1-HFMCP/MCP-01-HuggingFace/` → minimal Hugging Face MCP console app
      - `/1-HFMCP/MCP-02-HuggingFace-Ollama/` → Ollama/Hugging Face example console app
 
+   ---
+
+   ## Folder details
+
+   Below are brief explanations of the two main demo folders so you can quickly understand what to open and run.
+
+   1-HFMCP
+   - Purpose: contains small .NET console samples that demonstrate calling Hugging Face MCP (Model Control Plane) style APIs from C#. These are minimal, self-contained examples intended for learning and quick experimentation.
+   - Notable folders/files:
+      - `MCP-01-HuggingFace/` — a tiny console app (`MCP-01-HuggingFace.csproj`, `Program.cs`) showing the simplest pattern to call a hosted model or inference endpoint.
+      - `MCP-02-HuggingFace-Ollama/` — an example that wires an Ollama local model or Ollama-style runtime through the same patterns used for cloud-hosted endpoints. Also includes `MCP-02-HuggingFace-Ollama.csproj` and `Program.cs`.
+   - How to run: open the folder in an editor or run from the command line with the .NET SDK installed (recommended .NET 9). Typical commands:
+
+      ```powershell
+      cd 1-HFMCP\MCP-01-HuggingFace
+      dotnet run
+      ```
+
+      Replace the path with `MCP-02-HuggingFace-Ollama` to run the second sample. Add any required API keys or local model runtime configuration into `appsettings.json` or environment variables as noted in each sample's README or `Program.cs` comments.
+
+   2-AIWebChat
+   - Purpose: a multi-project sample (AppHost, ServiceDefaults, Web) that demonstrates an end-to-end AI Web Chat application using Azure AI Foundry patterns and/or Hugging Face integrations. The `1.start` folder is a trimmed starter ready for follow-along demos; `2.complete` contains the finished version used for demos.
+   - Notable folders/files:
+      - `AIWebChat-HF-AIFoundry.AppHost/` — host project for background services and configuration (`AppHost.cs`, `appsettings*.json`).
+      - `AIWebChat-HF-AIFoundry.ServiceDefaults/` — shared service wiring and extension helpers.
+      - `AIWebChat-HF-AIFoundry.Web/` — the Blazor/ASP.NET Web UI (`Program.cs`, `Components/`, `wwwroot/`, `Services/`).
+   - How to run: open the solution in the `1.start` or `2.complete` folder with Visual Studio or run from the command line using the .NET SDK. Example (from `1.start`):
+
+      ```powershell
+      cd 2-AIWebChat\1.start\AIWebChat-HF-AIFoundry.Web
+      dotnet run
+      ```
+
+      Or open the solution `AIWebChat-HF-AIFoundry.slnx` in Visual Studio/VS Code and run the Web project. Check each project's `appsettings.Development.json` for any API keys, endpoints, or local model configuration required to connect to AI services.
+
+   Notes & tips
+   - Use .NET 9 SDK to build and run the projects (links earlier in this README). If you're using Codespaces or a devcontainer, ensure the container has .NET 9 installed.
+   - Many samples expect you to provide credentials or local runtimes (Ollama) via environment variables or `appsettings` — inspect `Program.cs` comments for guidance.
+   - The `2.complete` folder contains the finished version that was used in the live demo; if you want a reference implementation, start there.
+
 ---
 
 ## 🧑‍💻 Reproduce the Copilot Agent + Codespaces setup
