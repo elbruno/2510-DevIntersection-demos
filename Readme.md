@@ -39,8 +39,8 @@ If you want a **fully working end-to-end implementation**, check out the repo be
 
 ## 🚀 Demos covered
 
-1. **Copilot x PowerPoint**  
-   Starting with Copilot-generated slides and refining them with Designer.
+1. **Copilot-driven project scaffolding**  
+   Use Copilot (or local tools) to scaffold full sample apps from prompts; an example prompt is provided below to create a C# .NET 9 console game about Orlando theme parks.
 
 2. **Creating a repo with custom instructions (GitHub + Copilot)**  
    Building an interactive console game about Orlando Fun Parks.
@@ -115,6 +115,62 @@ You can explore this repo directly in **GitHub Codespaces**:
    - Use .NET 9 SDK to build and run the projects (links earlier in this README). If you're using Codespaces or a devcontainer, ensure the container has .NET 9 installed.
    - Many samples expect you to provide credentials or local runtimes (Ollama) via environment variables or `appsettings` — inspect `Program.cs` comments for guidance.
    - The `2.complete` folder contains the finished version that was used in the live demo; if you want a reference implementation, start there.
+
+   ---
+
+   ## Create a new GitHub repo from a prompt
+
+   If you'd like to generate a new repository based on a single prompt (for example, to scaffold the Orlando theme park console game), you can use GitHub Copilot Chat (Agent Mode) with repo context enabled, or run the prompt locally and create the repo yourself.
+
+   Recommended prompt (copy and paste exactly):
+
+   ```text
+   Build a C# .NET 9 console app: an interactive Orlando theme park adventure 🎢. Players explore parks, collect souvenirs, and make choices shaping the story. Include modular classes (Player, Park, GameEngine), colorful console UI, save/load system, and full README (How to Start, Prereqs, Usage, Diagrams). Add docs/ with UML + architecture flow, tests/ with xUnit, .gitignore, sample data, GitHub Actions CI, XML docs, and commented clean code.
+   ```
+
+   Two ways to use the prompt
+
+   - Option A — GitHub Copilot Chat (Agent Mode):
+      1. Open Copilot Chat in the repository (or in an empty repo workspace) and paste the prompt.
+      2. Ask Copilot to "Create a new repository from this prompt" or "Generate files in this workspace". Copilot will produce files and may create a local commit/branch for you to review.
+
+   - Option B — Local/manual scaffolding:
+     1. Create a new folder for your repo and initialize Git:
+
+        ```powershell
+        md OrlandoThemeParks
+        cd OrlandoThemeParks
+        git init
+        ```
+
+     2. Create a new .NET console app and add projects for tests/docs:
+
+        ```powershell
+        dotnet new console -n OrlandoThemeParks.App
+        dotnet new sln -n OrlandoThemeParks
+        dotnet sln add OrlandoThemeParks.App\OrlandoThemeParks.App.csproj
+        md tests; cd tests; dotnet new xunit -n OrlandoThemeParks.Tests; cd ..
+        dotnet sln add tests\OrlandoThemeParks.Tests\OrlandoThemeParks.Tests.csproj
+        ```
+
+     3. Add a `docs/` folder and `docs/uml` for diagrams; add a `.github/workflows/ci.yml` for GitHub Actions CI. Use the prompt above to guide file contents, or paste the prompt into Copilot Chat inside your new workspace to generate the remaining files.
+
+   Follow-up request
+
+   After you run the prompt (either in Copilot Chat or locally), you can ask a follow-up request to expand or modify the generated repo. Example follow-up request to run after the repo is created:
+
+   ```text
+   Now that the Orlando theme park console app repo exists, please add the following improvements:
+   - Implement the `Player`, `Park`, and `GameEngine` classes with clear XML documentation comments and unit tests covering key behaviors.
+   - Add a colorized console UI layer with a small menu system and save/load support using JSON files in a `data/` folder.
+   - Create `docs/architecture.md` with a simple ASCII architecture flow and include UML class diagrams (in PlantUML or simple PNGs).
+   - Add GitHub Actions workflows to run `dotnet test` and validate code formatting.
+   - Ensure code is commented and includes a top-level `README.md` with How to Start, Prereqs, Usage, and Diagrams.
+   ```
+
+   When to remove or keep files
+
+   - If Copilot generates too much, review the diff and remove any placeholder PowerPoint or slide files. This repo removes the older PowerPoint demo references — if you see slide assets you don't need, delete them.
 
 ---
 
