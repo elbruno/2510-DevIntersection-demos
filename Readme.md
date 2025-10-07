@@ -72,6 +72,9 @@ You can explore this repo directly in **GitHub Codespaces**:
    - `/slides` → reference slides or visuals  
    - `/2-AIWebChat/1.start` → starter project for AI Web Chat  
    - `/2-AIWebChat/2.complete` → completed AI Web Chat project
+   - `/1-HFMCP/` → console samples showing Hugging Face MCP usage from C#
+     - `/1-HFMCP/MCP-01-HuggingFace/` → minimal Hugging Face MCP console app
+     - `/1-HFMCP/MCP-02-HuggingFace-Ollama/` → Ollama/Hugging Face example console app
 
 ---
 
