@@ -6,6 +6,7 @@
 		<RootNamespace>MCP_02_HuggingFace_Ollama</RootNamespace>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
+		<UserSecretsId>1feb260e-f694-4e30-b956-8a8279b4818e</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>
