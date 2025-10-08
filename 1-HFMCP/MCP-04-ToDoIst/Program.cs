@@ -8,7 +8,7 @@ using ModelContextProtocol.Client;
 using System.ClientModel;
 
 // To run the sample, you need to set the following environment variables or user secrets:
-//      "HF_API_KEY": " your HF token"
+//      "TodoistApiKey": " your Todoist API key"
 // Using GitHub models
 //      "GITHUB_TOKEN": " your GitHub Token "
 // Using Azure OpenAI models
@@ -23,16 +23,17 @@ var config = builder.Configuration
     .Build();
 var deploymentName = config["deploymentName"] ?? "gpt-4.1-mini";
 
-// create MCP Client using Hugging Face endpoint
+
+// create MCP Client using Todist Face endpoint
 var hfHeaders = new Dictionary<string, string>
 {
-    { "Authorization", $"Bearer {config["HF_API_KEY"]}" }
-};
+    { "Authorization", $"Bearer {config["TodoistApiKey"]}" }
+}; 
 var clientTransport = new HttpClientTransport(
     new()
     {
-        Name = "HF Server",
-        Endpoint = new Uri("https://huggingface.co/mcp"),
+        Name = "Todoist Server",
+        Endpoint = new Uri("https://ai.todoist.net/mcp"),
         AdditionalHeaders = hfHeaders
     });
 await using var mcpClient = await McpClient.CreateAsync(clientTransport);
@@ -56,7 +57,7 @@ var chatOptions = new ChatOptions
 };
 
 // Create image
-var query = "Create a prixelated image of a racoon in Canada using the Flux1 tool from the Hugging Face MCP server";
+var query = "Show me my user information using the tool from the Todoist MCP server";
 Console.WriteLine($"Starting the process to process this prompt: {query}");
 
 var result = await client.GetResponseAsync(query, chatOptions);

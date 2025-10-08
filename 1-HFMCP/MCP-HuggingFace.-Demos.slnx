@@ -1,5 +1,6 @@
 <Solution>
   <Project Path="MCP-01-HuggingFace/MCP-01-HuggingFace.csproj" />
   <Project Path="MCP-02-HuggingFace-Ollama/MCP-02-HuggingFace-Ollama.csproj" />
+  <Project Path="MCP-04-ToDoIst/MCP-04-ToDoIst.csproj" Id="c2f21075-d7ce-4657-90c2-ec74542b3bb2" />
   <Project Path="MCP-32-HuggingFace-AIFoundry/MCP-03-HuggingFace-AIFoundry.csproj" Id="96ec2015-43ce-4cdd-890f-2371212fe085" />
 </Solution>
