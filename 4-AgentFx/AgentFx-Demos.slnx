@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/1 Simple/">
+    <Project Path="D:/events/2510-DevIntersection-demos/4-AgentFx/AgentFx01/AgentFx01.csproj" />
+    <Project Path="D:/events/2510-DevIntersection-demos/4-AgentFx/AgentFx02/AgentFx02.csproj" />
+  </Folder>
+  <Folder Name="/2 AI Foundry/">
+    <Project Path="AgentFx-AIFoundry-01/AgentFx-AIFoundry-01.csproj" />
+  </Folder>
+  <Folder Name="/3 Ollama/">
+    <Project Path="AgentFx-Ollama-01/AgentFx-Ollama-01.csproj" />
+  </Folder>
+</Solution>
