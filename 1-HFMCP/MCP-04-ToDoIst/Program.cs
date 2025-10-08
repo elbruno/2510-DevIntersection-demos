@@ -56,7 +56,7 @@ var chatOptions = new ChatOptions
     ModelId = deploymentName
 };
 
-// Create image
+// Show the current information from Todoist using the MCP tool
 var query = "Show me my user information using the tool from the Todoist MCP server";
 Console.WriteLine($"Starting the process to process this prompt: {query}");
 
