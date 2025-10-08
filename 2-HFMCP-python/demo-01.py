@@ -1,11 +1,3 @@
-# pip install "mcp" openai
-# Environment:
-#   MCP_URL=https://your-mcp.example.com/mcp
-#   MCP_BEARER_TOKEN=eyJhbGciOi...
-#   AZURE_OPENAI_ENDPOINT=https://YOUR-RESOURCE-NAME.openai.azure.com
-#   AZURE_OPENAI_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxx
-#   AZURE_OPENAI_DEPLOYMENT=<your-chat-deployment-name>   # e.g., gpt-4o or gpt-4.1 deployment name
-
 import os, json, asyncio
 from openai import OpenAI
 from mcp import ClientSession

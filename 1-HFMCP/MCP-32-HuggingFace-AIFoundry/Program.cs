@@ -1,20 +1,27 @@
-﻿#pragma warning disable SKEXP0001, SKEXP0070  
-
+﻿using Azure;
+using Azure.AI.Inference;
+using Azure.AI.OpenAI;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using ModelContextProtocol.Client;
+using System.ClientModel;
 
 // To run the sample, you need to set the following environment variables or user secrets:
-// "HF_API_KEY": " your HF token"
-// "deploymentName" : "llama3.2" // Optional, defaults to "llama3.2" if not specified
+// Using GitHub models
+//      "HF_API_KEY": " your HF token"
+//      "GITHUB_TOKEN": " your GitHub Token "
+// Using Azure OpenAI models
+//      "endpoint": "https://<endpoint>.services.ai.azure.com/",
+//      "apikey": " your key ",
+//      "deploymentName": "a deployment name, ie: gpt-4.1-mini"
 
 var builder = Host.CreateApplicationBuilder(args);
 var config = builder.Configuration
     .AddEnvironmentVariables()
     .AddUserSecrets<Program>()
     .Build();
-var deploymentName = config["deploymentName"] ?? "gpt-oss"; // Default to llama3.2 if not specified
+var deploymentName = config["deploymentName"] ?? "gpt-4.1-mini"; // Default to gpt-4.1-mini if not specified 
 
 // create MCP Client using Hugging Face endpoint
 var hfHeaders = new Dictionary<string, string>
@@ -41,12 +48,7 @@ Console.ReadLine();
 Console.WriteLine();
 
 // create an IChatClient using the MCP tools
-var uri = new Uri("http://localhost:11434");
-var client = new OllamaChatClient(uri, deploymentName)
-    .AsBuilder()
-    .UseFunctionInvocation()
-    .Build();
-
+IChatClient client = GetChatClient();
 var chatOptions = new ChatOptions
 {
     Tools = [.. tools],
@@ -54,10 +56,26 @@ var chatOptions = new ChatOptions
 };
 
 // Create image
-var query = "Create a prixelated image of puppy using the Flux1 tool from the Hugging Face MCP server."; 
+var query = "Create a prixelated image of a racoon in Canada using the Flux1 tool from the Hugging Face MCP server";
 Console.WriteLine($"Starting the process to process this prompt: {query}");
 
 var result = await client.GetResponseAsync(query, chatOptions);
 Console.Write($"AI response: {result}");
 Console.WriteLine();
 
+IChatClient GetChatClient()
+{
+    IChatClient client = null;
+
+    // create an Azure OpenAI client if githubToken is not valid
+    var endpoint = config["endpoint"];
+    var apiKey = new ApiKeyCredential(config["apikey"]);
+
+    client = new AzureOpenAIClient(new Uri(endpoint), apiKey)
+        .GetChatClient(deploymentName)
+        .AsIChatClient()
+        .AsBuilder()
+        .UseFunctionInvocation()
+        .Build();
+    return client;
+}
