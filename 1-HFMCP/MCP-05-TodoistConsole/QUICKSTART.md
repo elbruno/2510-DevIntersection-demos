@@ -41,6 +41,23 @@ dotnet run -- add "Buy groceries"
 dotnet run -- complete 1234567890
 ```
 
+### Chat with AI (interactive mode) 🆕
+```bash
+# First, set up Azure OpenAI credentials
+dotnet user-secrets set "endpoint" "https://your-endpoint.openai.azure.com/"
+dotnet user-secrets set "apikey" "your-azure-openai-key"
+
+# Start chat mode
+dotnet run -- chat
+```
+
+Then talk naturally:
+```
+You: Show me my tasks
+You: Add a task to buy groceries
+You: Complete task 123456
+```
+
 ### See available tools
 ```bash
 dotnet run -- tools

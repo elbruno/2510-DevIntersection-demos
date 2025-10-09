@@ -128,6 +128,16 @@ class Program
         });
         rootCommand.AddCommand(toolsCommand);
 
+        // Chat command (interactive mode with AI)
+        var chatCommand = new Command("chat", "Start an interactive chat session with AI to manage tasks");
+        chatCommand.SetHandler(async () =>
+        {
+            await using var mcpClient = await McpClient.ConnectAsync(serverPath, serverArgs, apiToken ?? "", requestTimeout, maxRetries);
+            var command = new ChatCommand(mcpClient, configuration);
+            await command.ExecuteAsync();
+        });
+        rootCommand.AddCommand(chatCommand);
+
         try
         {
             return await rootCommand.InvokeAsync(args);

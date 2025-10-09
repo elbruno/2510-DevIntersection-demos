@@ -4,10 +4,12 @@ A C# .NET 9 console application that connects to a Todoist MCP (Model Context Pr
 
 ## Features
 
+- ✅ **Interactive Chat Mode**: Chat naturally with AI to manage your tasks
 - ✅ **List Tasks**: View all your Todoist tasks
 - ✅ **Add Tasks**: Create new tasks with a title
 - ✅ **Complete Tasks**: Mark tasks as complete by ID
 - ✅ **MCP Integration**: Uses JSON-RPC over stdio for communication
+- ✅ **AI-Powered**: Integrates with Azure OpenAI for natural language interaction
 - ✅ **Robust Error Handling**: Automatic retries with exponential backoff
 - ✅ **Colorful Console**: User-friendly output with color-coded messages
 - ✅ **Flexible Configuration**: Support for User Secrets, environment variables, and appsettings.json
@@ -23,6 +25,10 @@ A C# .NET 9 console application that connects to a Todoist MCP (Model Context Pr
    - Verify installation: `node --version` and `npm --version`
 
 3. **Todoist API Token**: Get your API token from [https://todoist.com/prefs/integrations](https://todoist.com/prefs/integrations)
+
+4. **Azure OpenAI** (Optional, for chat mode): Azure OpenAI endpoint and API key
+   - Required only if you want to use the interactive chat mode
+   - Get your Azure OpenAI credentials from [Azure Portal](https://portal.azure.com)
 
 ### MCP Server Setup
 
@@ -136,6 +142,59 @@ dotnet run -- complete 123456789
 Marking task 123456789 as complete...
 ✓ Task marked as complete!
 Task 123456789 has been completed.
+```
+
+#### Interactive chat mode (with AI)
+```bash
+dotnet run -- chat
+```
+
+**Example session**:
+```
+╔════════════════════════════════════════════════════════════╗
+║         Welcome to Todoist MCP Chat Mode! 🤖              ║
+╚════════════════════════════════════════════════════════════╝
+
+You can now chat naturally with the assistant about your Todoist tasks.
+Examples:
+  • 'Show me my tasks'
+  • 'Add a task to buy groceries'
+  • 'Complete task 123456'
+  • 'What tasks do I have today?'
+
+Type 'exit' or 'quit' to leave chat mode.
+
+You: Show me all my tasks
+Assistant: I'll get your tasks for you... [retrieves tasks using MCP tool]
+Here are your current tasks:
+1. [ID: 123456] Buy groceries
+2. [ID: 789012] Finish report
+3. [ID: 345678] Call dentist
+
+You: Add a task to prepare demo for conference
+Assistant: I'll add that task for you... [calls add_task tool]
+✓ Task added! "Prepare demo for conference" has been created.
+
+You: exit
+Goodbye! Thanks for using Todoist MCP Chat! 👋
+```
+
+**Configuration for chat mode**:
+
+To use chat mode, you need to configure Azure OpenAI credentials:
+
+```bash
+# Using User Secrets (recommended)
+dotnet user-secrets set "endpoint" "https://your-endpoint.openai.azure.com/"
+dotnet user-secrets set "apikey" "your-azure-openai-api-key"
+dotnet user-secrets set "deploymentName" "gpt-4o-mini"  # Optional, defaults to gpt-4o-mini
+```
+
+Or via environment variables:
+```bash
+export endpoint="https://your-endpoint.openai.azure.com/"
+export apikey="your-azure-openai-api-key"
+export deploymentName="gpt-4o-mini"
 ```
 
 #### List available MCP tools
