@@ -1,4 +1,4 @@
-# Elevate Your .NET with GitHub Copilot and AI APIs — DevIntersection Demos
+# DevIntersection 2025 — AI & .NET Sessions
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Contributors](https://img.shields.io/github/contributors/elbruno/2510-DevIntersection-demos.svg)](https://github.com/elbruno/2510-DevIntersection-demos/graphs/contributors)
@@ -15,8 +15,13 @@
 
 ---
 
-> Slides and demo artifacts for the session **“Elevate Your .NET with GitHub Copilot and AI APIs.”**  
-> If you’re looking for the **finished, runnable sample** created live from prompts, head over to:  
+> Slides and demo artifacts for three exciting sessions at **DevIntersection 2025**:
+>
+> 🤖 **What is MCP** — Understanding the Model Context Protocol  
+> 🚀 **Elevate Your .NET with GitHub Copilot and AI APIs** — Build smarter with AI integration  
+> 💡 **Build Intelligent .NET Apps with Code** — Hands-on AI development patterns
+>
+> If you're looking for the **finished, runnable sample** created live from prompts, head over to:  
 > 👉 **[OrlandoParksLabs](https://github.com/elbruno/OrlandoParksLabs)**
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/codespaces/new?repo=elbruno/2510-DevIntersection-demos)
@@ -25,7 +30,7 @@
 
 ## 🧩 What’s in this repo?
 
-This repository contains the lightweight assets used during the **DevIntersection 2025** session:
+This repository contains the lightweight assets used during the **DevIntersection 2025** sessions:
 
 - 🎤 **Slides & session flow:** from Copilot to .NET AI integration and deployment  
 - 💻 **Starter code & snippets:** samples demonstrated live  
