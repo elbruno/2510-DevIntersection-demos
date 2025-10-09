@@ -28,12 +28,21 @@ class Program
         // Display welcome banner
         DisplayWelcomeBanner();
 
+        // Create root command first
+        var needsToken = true;
+        
+        // Check if user is just asking for help or version
+        if (args.Length > 0 && (args[0] == "--help" || args[0] == "-h" || args[0] == "-?" || args[0] == "--version"))
+        {
+            needsToken = false;
+        }
+
         // Get API token from configuration
         var apiToken = configuration["TODOIST_API_TOKEN"] 
                       ?? configuration["TodoistApiToken"]
                       ?? Environment.GetEnvironmentVariable("TODOIST_API_TOKEN");
 
-        if (string.IsNullOrWhiteSpace(apiToken))
+        if (string.IsNullOrWhiteSpace(apiToken) && needsToken && args.Length > 0)
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Error: TODOIST_API_TOKEN not found!");
@@ -58,7 +67,7 @@ class Program
         var listCommand = new Command("list", "List all tasks from Todoist");
         listCommand.SetHandler(async () =>
         {
-            await using var mcpClient = await McpClient.ConnectAsync(serverPath, serverArgs, apiToken, requestTimeout, maxRetries);
+            await using var mcpClient = await McpClient.ConnectAsync(serverPath, serverArgs, apiToken ?? "", requestTimeout, maxRetries);
             var command = new ListCommand(mcpClient);
             await command.ExecuteAsync();
         });
@@ -70,7 +79,7 @@ class Program
         addCommand.AddArgument(titleArgument);
         addCommand.SetHandler(async (string title) =>
         {
-            await using var mcpClient = await McpClient.ConnectAsync(serverPath, serverArgs, apiToken, requestTimeout, maxRetries);
+            await using var mcpClient = await McpClient.ConnectAsync(serverPath, serverArgs, apiToken ?? "", requestTimeout, maxRetries);
             var command = new AddCommand(mcpClient);
             await command.ExecuteAsync(title);
         }, titleArgument);
@@ -82,7 +91,7 @@ class Program
         completeCommand.AddArgument(idArgument);
         completeCommand.SetHandler(async (string id) =>
         {
-            await using var mcpClient = await McpClient.ConnectAsync(serverPath, serverArgs, apiToken, requestTimeout, maxRetries);
+            await using var mcpClient = await McpClient.ConnectAsync(serverPath, serverArgs, apiToken ?? "", requestTimeout, maxRetries);
             var command = new CompleteCommand(mcpClient);
             await command.ExecuteAsync(id);
         }, idArgument);
@@ -98,7 +107,7 @@ class Program
                 Console.WriteLine("Connecting to Todoist MCP server...");
                 Console.ResetColor();
 
-                await using var mcpClient = await McpClient.ConnectAsync(serverPath, serverArgs, apiToken, requestTimeout, maxRetries);
+                await using var mcpClient = await McpClient.ConnectAsync(serverPath, serverArgs, apiToken ?? "", requestTimeout, maxRetries);
                 var tools = await mcpClient.ListToolsAsync();
 
                 Console.ForegroundColor = ConsoleColor.Green;
