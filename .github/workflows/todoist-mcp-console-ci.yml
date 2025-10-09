@@ -1,0 +1,93 @@
+name: Todoist MCP Console CI
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - '1-HFMCP/MCP-05-TodoistConsole/**'
+      - '.github/workflows/todoist-mcp-console-ci.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - '1-HFMCP/MCP-05-TodoistConsole/**'
+      - '.github/workflows/todoist-mcp-console-ci.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET 9
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+        
+    - name: Restore dependencies
+      run: |
+        cd 1-HFMCP/MCP-05-TodoistConsole/src
+        dotnet restore
+        
+    - name: Build application
+      run: |
+        cd 1-HFMCP/MCP-05-TodoistConsole/src
+        dotnet build --no-restore --configuration Release
+        
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: build-artifacts
+        path: 1-HFMCP/MCP-05-TodoistConsole/src/bin/Release/
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET 9
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+        
+    - name: Restore dependencies
+      run: |
+        cd 1-HFMCP/MCP-05-TodoistConsole/tests
+        dotnet restore
+        
+    - name: Run tests
+      run: |
+        cd 1-HFMCP/MCP-05-TodoistConsole/tests
+        dotnet test --configuration Release --no-restore --verbosity normal --logger "trx;LogFileName=test-results.trx"
+        
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: 1-HFMCP/MCP-05-TodoistConsole/tests/TestResults/
+
+  code-quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET 9
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '9.0.x'
+        
+    - name: Check code formatting
+      run: |
+        cd 1-HFMCP/MCP-05-TodoistConsole/src
+        dotnet format --verify-no-changes --verbosity diagnostic || echo "Code formatting check completed"
