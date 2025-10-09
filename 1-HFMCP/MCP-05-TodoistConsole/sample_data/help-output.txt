@@ -1,0 +1,20 @@
+╔════════════════════════════════════════╗
+║     Todoist MCP Console v1.0.0         ║
+║   Manage tasks with MCP integration    ║
+╚════════════════════════════════════════╝
+
+Description:
+  Todoist MCP Console - Manage your Todoist tasks via MCP
+
+Usage:
+  TodoistMcpConsole [command] [options]
+
+Options:
+  --version       Show version information
+  -?, -h, --help  Show help and usage information
+
+Commands:
+  list           List all tasks from Todoist
+  add <title>    Add a new task to Todoist
+  complete <id>  Mark a task as complete
+  tools          List available MCP tools
