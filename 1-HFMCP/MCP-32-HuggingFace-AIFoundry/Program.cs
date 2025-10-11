@@ -1,6 +1,4 @@
-﻿using Azure;
-using Azure.AI.Inference;
-using Azure.AI.OpenAI;
+﻿using Azure.AI.OpenAI;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -21,7 +19,7 @@ var config = builder.Configuration
     .AddEnvironmentVariables()
     .AddUserSecrets<Program>()
     .Build();
-var deploymentName = config["deploymentName"] ?? "gpt-4.1-mini";
+var deploymentName = config["deploymentName"] ?? "gpt-5-mini";
 
 // create MCP Client using Hugging Face endpoint
 var hfHeaders = new Dictionary<string, string>
