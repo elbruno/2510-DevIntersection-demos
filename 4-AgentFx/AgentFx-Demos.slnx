@@ -9,4 +9,7 @@
   <Folder Name="/3 Ollama/">
     <Project Path="AgentFx-Ollama-01/AgentFx-Ollama-01.csproj" />
   </Folder>
+  <Folder Name="/4 Image Generation/">
+    <Project Path="AgentFx-ImageGen-01/AgentFx-ImageGen-01.csproj" Id="25c06364-ad74-420c-96af-f607d96fa496" />
+  </Folder>
 </Solution>

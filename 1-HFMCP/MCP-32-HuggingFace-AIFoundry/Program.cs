@@ -54,7 +54,8 @@ var chatOptions = new ChatOptions
 };
 
 // Create image
-var query = "Create a prixelated image of a bear in Australia using the Flux1 tool from the Hugging Face MCP server";
+//var query = "Create a prixelated image of a bear in Australia using the Flux1 tool from the Hugging Face MCP server";
+var query = "What is the name of the user logged in to the Hugging Face MCP Server";
 Console.WriteLine($"Starting the process to process this prompt: {query}");
 
 var result = await client.GetResponseAsync(query, chatOptions);
