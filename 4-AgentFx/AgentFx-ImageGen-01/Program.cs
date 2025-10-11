@@ -6,11 +6,11 @@ using Microsoft.Extensions.AI;
 
 // get mcp tools
 var (mcpClient, tools) = await HuggingFaceMCP.GetHuggingFaceMCPClientAndToolsAsync();
-
 foreach (var tool in tools)
 {
     Console.WriteLine($"Connected to server with tools: {tool.Name}");
 }
+Console.WriteLine($"===");
 
 // get chat client
 IChatClient chatClient = ChatClientProvider.GetChatClient();
