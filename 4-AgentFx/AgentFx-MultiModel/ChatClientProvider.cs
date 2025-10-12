@@ -1,6 +1,7 @@
 ﻿using Azure;
 using Azure.AI.Inference;
 using Azure.AI.OpenAI;
+using Azure.Identity;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
@@ -43,14 +44,27 @@ class ChatClientProvider
         {
             // create an Azure OpenAI client if githubToken is not valid
             var endpoint = config["endpoint"];
-            var apiKey = new ApiKeyCredential(config["apikey"]);
 
-            client = new AzureOpenAIClient(new Uri(endpoint), apiKey)
-                .GetChatClient(deploymentName)
-                .AsIChatClient()
-                .AsBuilder()
-                .UseFunctionInvocation()
-                .Build();
+            if (!string.IsNullOrEmpty(config["apikey"]))
+            {
+                var apiKey = new ApiKeyCredential(config["apikey"]);
+                client = new AzureOpenAIClient(new Uri(endpoint), apiKey)
+                    .GetChatClient(deploymentName)
+                    .AsIChatClient()
+                    .AsBuilder()
+                    .UseFunctionInvocation()
+                    .Build();
+            }
+            else
+            {
+                // use default azure credentials if no apiKey is provided
+                client = new AzureOpenAIClient(new Uri(endpoint), new DefaultAzureCredential())
+                    .GetChatClient(deploymentName)
+                    .AsIChatClient()
+                    .AsBuilder()
+                    .UseFunctionInvocation()
+                    .Build();
+            }
         }
         return client;
     }
