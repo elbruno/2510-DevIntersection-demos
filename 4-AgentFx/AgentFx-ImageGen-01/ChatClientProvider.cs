@@ -4,18 +4,12 @@ using Azure.AI.OpenAI;
 using Microsoft.Extensions.AI;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using OllamaSharp;
 using System.ClientModel;
 
-namespace AgentFx_MultiModel;
+namespace AgentFx_ImageGen_01;
 
 class ChatClientProvider
 {
-    public static IChatClient GetChatClientOllama(string model = "llama3.2")
-    {
-        return new OllamaApiClient(new Uri("http://localhost:11434/"), model);
-    }
-
     public static IChatClient GetChatClient()
     {
         var builder = Host.CreateApplicationBuilder();

@@ -1,13 +1,10 @@
-using Azure.AI.OpenAI;
-using Azure.Identity;
+using AgentFx_MultiModel;
 using Microsoft.Agents.AI;
 using Microsoft.Agents.AI.Workflows;
 using Microsoft.Extensions.AI;
-using Microsoft.Extensions.Configuration;
-using OllamaSharp;
-using OpenAI;
-using OpenAI.Chat;
-using System.ClientModel;
+using OpenTelemetry;
+using OpenTelemetry.Trace;
+
 
 // To run the sample, you need to set the following environment variables or user secrets:
 // Using GitHub models (for Agent 1):
@@ -20,27 +17,21 @@ using System.ClientModel;
 
 Console.WriteLine("=== Microsoft Agent Framework - Multi-Model Orchestration Demo ===");
 Console.WriteLine("This demo showcases 3 agents working together:");
-Console.WriteLine("  1. Researcher (GitHub Models) - Researches topics");
-Console.WriteLine("  2. Writer (Azure Foundry) - Writes content based on research");
-Console.WriteLine("  3. Reviewer (Ollama) - Reviews and provides feedback");
+Console.WriteLine("  1. Researcher (Azure Foundry or GitHub Models) - Researches topics");
+Console.WriteLine("  2. Writer (Azure Foundry or GitHub Models) - Writes content based on research");
+Console.WriteLine("  3. Reviewer (Ollama - llama 3.2) - Reviews and provides feedback");
 Console.WriteLine();
 
-var config = new ConfigurationBuilder().AddUserSecrets<Program>().Build();
+// ===== OpenTelemetry Trace Provider ====
+using var tracerProvider = Sdk.CreateTracerProviderBuilder()
+    .AddSource("agent-telemetry-source")
+    .AddConsoleExporter()
+    .Build();
 
 // ===== Agent 1: Researcher using GitHub Models =====
 Console.WriteLine("Setting up Agent 1: Researcher (GitHub Models)...");
-var githubToken = Environment.GetEnvironmentVariable("GITHUB_TOKEN");
-if (string.IsNullOrEmpty(githubToken))
-{
-    githubToken = config["GITHUB_TOKEN"];
-}
 
-IChatClient githubChatClient =
-    new ChatClient(
-            "gpt-4o-mini",
-            new ApiKeyCredential(githubToken!),
-            new OpenAIClientOptions { Endpoint = new Uri("https://models.github.ai/inference") })
-        .AsIChatClient();
+IChatClient githubChatClient = ChatClientProvider.GetChatClient();
 
 AIAgent researcher = new ChatClientAgent(
     githubChatClient,
@@ -48,20 +39,15 @@ AIAgent researcher = new ChatClientAgent(
     {
         Name = "Researcher",
         Instructions = "You are a research expert. Your job is to gather key facts and interesting points about the given topic. Be concise and focus on the most important information."
-    });
+    })
+    .AsBuilder()
+    .UseOpenTelemetry(sourceName: "agent-telemetry-source")
+    .Build(); 
 
 // ===== Agent 2: Writer using Azure Foundry/OpenAI =====
 Console.WriteLine("Setting up Agent 2: Writer (Azure Foundry)...");
-var endpoint = config["endpoint"] ?? throw new InvalidOperationException("endpoint configuration is required");
-var apiKey = new ApiKeyCredential(config["apikey"] ?? throw new InvalidOperationException("apikey configuration is required"));
-var deploymentName = !string.IsNullOrEmpty(config["deploymentName"]) ? config["deploymentName"] : "gpt-4o-mini";
 
-IChatClient azureChatClient = 
-    new AzureOpenAIClient(
-        new Uri(endpoint),
-        apiKey)
-    .GetChatClient(deploymentName)
-    .AsIChatClient();
+IChatClient azureChatClient = ChatClientProvider.GetChatClient();
 
 AIAgent writer = new ChatClientAgent(
     azureChatClient,
@@ -69,12 +55,15 @@ AIAgent writer = new ChatClientAgent(
     {
         Name = "Writer",
         Instructions = "You are a creative writer. Take the research provided and write an engaging, well-structured article. Make it informative yet entertaining."
-    });
+    })
+    .AsBuilder()
+    .UseOpenTelemetry(sourceName: "agent-telemetry-source")
+    .Build();
+
 
 // ===== Agent 3: Reviewer using Ollama =====
 Console.WriteLine("Setting up Agent 3: Reviewer (Ollama)...");
-IChatClient ollamaChatClient =
-    new OllamaApiClient(new Uri("http://localhost:11434/"), "llama3.2");
+IChatClient ollamaChatClient = ChatClientProvider.GetChatClientOllama();
 
 AIAgent reviewer = new ChatClientAgent(
     ollamaChatClient,
@@ -82,7 +71,11 @@ AIAgent reviewer = new ChatClientAgent(
     {
         Name = "Reviewer",
         Instructions = "You are an editor and reviewer. Analyze the article provided, give constructive feedback, and suggest improvements for clarity, grammar, and engagement."
-    });
+    })
+    .AsBuilder()
+    .UseOpenTelemetry(sourceName: "agent-telemetry-source")
+    .Build();
+
 
 // ===== Create Sequential Workflow =====
 Console.WriteLine("Creating workflow: Researcher -> Writer -> Reviewer");
